@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Clients</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-container, .search-container { margin-bottom: 20px; }
+        label { display: block; margin: 5px 0; }
+        input, button { padding: 8px; margin: 5px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Gestion des Clients</h1>
+
+    <div class="search-container">
+        <h2>Rechercher un client</h2>
+        <label>Nom: <input type="text" id="searchName"></label>
+        <label>Prénom: <input type="text" id="searchFirstName"></label>
+        <button onclick="searchClients()">Rechercher</button>
+    </div>
+
+    <div class="form-container">
+        <h2>Ajouter/Modifier un client</h2>
+        <label>ID: <input type="text" id="clientId" readonly></label>
+        <label>Nom: <input type="text" id="name"></label>
+        <label>Prénom: <input type="text" id="firstName"></label>
+        <label>Date de naissance: <input type="date" id="birthDate"></label>
+        <label>Adresse: <input type="text" id="address"></label>
+        <label>Code Postal: <input type="text" id="postalCode"></label>
+        <label>Ville: <input type="text" id="city"></label>
+        <button onclick="saveClient()">Enregistrer</button>
+        <button onclick="resetForm()">Réinitialiser</button>
+    </div>
+
+    <h2>Liste des clients</h2>
+    <table id="clientTable">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Date de naissance</th>
+                <th>Adresse</th>
+                <th>Code Postal</th>
+                <th>Ville</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="clientTableBody"></tbody>
+    </table>
+
+    <div id="error" class="error"></div>
+
+    <script>
+        async function searchClients() {
+            const name = document.getElementById('searchName').value;
+            const firstName = document.getElementById('searchFirstName').value;
+            try {
+                const response = await fetch(`/clients?name=${encodeURIComponent(name)}&first_name=${encodeURIComponent(firstName)}`);
+                const clients = await response.json();
+                displayClients(clients);
+            } catch (error) {
+                document.getElementById('error').textContent = 'Erreur lors de la recherche: ' + error.message;
+            }
+        }
+
+        function displayClients(clients) {
+            const tableBody = document.getElementById('clientTableBody');
+            tableBody.innerHTML = '';
+            clients.forEach(client => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${client.name}</td>
+                    <td>${client.first_name}</td>
+                    <td>${client.birth_date}</td>
+                    <td>${client.address}</td>
+                    <td>${client.postal_code}</td>
+                    <td>${client.city}</td>
+                    <td><button onclick="editClient('${client.client_id}')">Modifier</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        async function editClient(clientId) {
+            try {
+                const response = await fetch(`/clients?name=&first_name=`);
+                const clients = await response.json();
+                const client = clients.find(c => c.client_id === clientId);
+                if (client) {
+                    document.getElementById('clientId').value = client.client_id;
+                    document.getElementById('name').value = client.name;
+                    document.getElementById('firstName').value = client.first_name;
+                    document.getElementById('birthDate').value = client.birth_date;
+                    document.getElementById('address').value = client.address;
+                    document.getElementById('postalCode').value = client.postal_code;
+                    document.getElementById('city').value = client.city;
+                }
+            } catch (error) {
+                document.getElementById('error').textContent = 'Erreur lors du chargement: ' + error.message;
+            }
+        }
+
+        async function saveClient() {
+            const client = {
+                client_id: document.getElementById('clientId').value || undefined,
+                name: document.getElementById('name').value,
+                first_name: document.getElementById('firstName').value,
+                birth_date: document.getElementById('birthDate').value,
+                address: document.getElementById('address').value,
+                postal_code: document.getElementById('postalCode').value,
+                city: document.getElementById('city').value
+            };
+
+            try {
+                const method = client.client_id ? 'PUT' : 'POST';
+                const url = client.client_id ? `/clients/${client.client_id}` : '/clients';
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(client)
+                });
+                if (response.ok) {
+                    resetForm();
+                    searchClients();
+                } else {
+                    document.getElementById('error').textContent = 'Erreur lors de l\'enregistrement';
+                }
+            } catch (error) {
+                document.getElementById('error').textContent = 'Erreur: ' + error.message;
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('clientId').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('firstName').value = '';
+            document.getElementById('birthDate').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('postalCode').value = '';
+            document.getElementById('city').value = '';
+            document.getElementById('error').textContent = '';
+        }
+    </script>
+</body>
+</html>
