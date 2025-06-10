@@ -28,11 +28,7 @@ jobs:
         run: cargo build --verbose
 
       - name: Run tests with coverage
-        uses: actions-rs/tarpaulin@v0.1
-        with:
-          version: latest
-        # OR manually:
-        # run: cargo install cargo-tarpaulin && cargo tarpaulin --out Lcov --output-dir ./coverage
+        run: cargo install cargo-tarpaulin && cargo tarpaulin --out Lcov --output-dir ./coverage
 
       - name: Upload coverage to SonarCloud
         uses: SonarSource/sonarcloud-github-action@v2
