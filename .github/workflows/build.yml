@@ -7,13 +7,38 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   sonarqube:
-    name: SonarQube
+    name: SonarQube Scan
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+          fetch-depth: 0  # Nécessaire pour une analyse pertinente des nouvelles lignes
+
+      # 1. Installer la toolchain Rust
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain-action@stable
+        with:
+          components: clippy
+
+      # 2. (Optionnel mais recommandé) Installer l'outil de couverture de code
+      - name: Install cargo-tarpaulin
+        uses: baptiste0928/cargo-install@v3
+        with:
+          pkgs: cargo-tarpaulin
+          version: latest
+
+      # 3. Générer le rapport Clippy (essentiel)
+      # Le `|| true` permet de continuer même si Clippy trouve des erreurs,
+      # afin que le rapport soit quand même envoyé à SonarCloud.
+      - name: Run Clippy
+        run: cargo clippy --message-format=json > clippy-report.json || true
+
+      # 4. (Optionnel) Générer le rapport de couverture de code au format LCOV
+      - name: Run cargo-tarpaulin
+        run: cargo tarpaulin --out Lcov
+
+      # 5. Lancer l'analyse SonarCloud
+      - name: SonarCloud Scan
+        uses: SonarSource/sonar-scanner-cli-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
