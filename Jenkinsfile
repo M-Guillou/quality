@@ -31,7 +31,7 @@ pipeline {
         stage('Test & Coverage') {
             steps {
                 bat 'cargo install cargo-tarpaulin'
-                bat 'cargo tarpaulin --out Lcov --output-dir ./coverage'
+                bat 'cargo tarpaulin --out Xml --output-dir coverage'
             }
         }
 
