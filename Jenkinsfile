@@ -15,7 +15,7 @@ pipeline {
 
         stage('Install Rust') {
             steps {
-                bat 'curl https://sh.rustup.rs -sSf | sh -s -- -y'
+                bat 'curl https://sh.rustup.rs -sSf | bat -s -- -y'
                 bat 'source $HOME/.cargo/env'
             }
         }
