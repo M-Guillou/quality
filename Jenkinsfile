@@ -2,46 +2,54 @@ pipeline {
     agent any
 
     environment {
-        SONAR_TOKEN = credentials('sonar-token-id')
+        SONAR_TOKEN = credentials('sonar-token')
+        CARGO_TERM_COLOR = 'always'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/M-Guillou/quality.git'
             }
         }
-        stage('Setup Rust') {
+
+        stage('Install Rust') {
             steps {
-                bat 'rustup default stable || rustup install stable && rustup default stable'
+                sh 'curl https://sh.rustup.rs -sSf | sh -s -- -y'
+                sh 'source $HOME/.cargo/env'
             }
         }
+
         stage('Build') {
             steps {
-                bat 'cargo build --verbose'
+                sh 'cargo build --verbose'
             }
         }
-        stage('Test') {
+
+        stage('Test & Coverage') {
             steps {
-                bat 'cargo test --verbose'
+                sh 'cargo install cargo-tarpaulin'
+                sh 'cargo tarpaulin --out Lcov --output-dir ./coverage'
             }
         }
-        stage('Coverage') {
+
+        stage('SonarCloud Analysis') {
             steps {
-                bat 'cargo install cargo-tarpaulin || echo "tarpaulin already installed"'
-                bat 'cargo tarpaulin --out Lcov --output-dir coverage'
-            }
-        }
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat 'sonar-scanner -Dsonar.projectKey=your_project_key -Dsonar.sources=. -Dsonar.coverageReportPaths=coverage/lcov.info'
+                withSonarQubeEnv('MySonarQubeServer') {
+                    sh 'sonar-scanner'
                 }
             }
         }
-        stage('OWASP Scan') {
+
+        stage('OWASP Check') {
             steps {
-                bat 'dependency-check.sh --project YourProjectName --scan . --format HTML --out reports/dependency-check-report.html'
+                sh './dependency-check/bin/dependency-check.sh --project your-project --scan .'
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                waitForQualityGate abortPipeline: true
             }
         }
     }
