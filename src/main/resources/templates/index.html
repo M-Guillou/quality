@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h1>Clients</h1>
+<a href="/ajouter">Ajouter un client</a>
+<ul>
+  <li th:each="c : ${clients}">
+    <span th:text="${c.prenom} + ' ' + ${c.nom} + ' ('
+                  + ${c.dateNaissance} + ') - ' + ${c.adresse} 
+                  + ', ' + ${c.codePostal} + ' ' + ${c.ville}"></span>
+  </li>
+</ul>
+</body>
+</html>
