@@ -8,12 +8,6 @@ pipeline {
                 bat 'rustup default stable'
             }
         }
-        stage('Env Check') {
-            steps {
-                bat 'where cargo'
-                bat 'echo %PATH%'
-            }
-        }
         stage('Build') {
             steps {
                 bat 'cargo build --verbose'
