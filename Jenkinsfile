@@ -18,27 +18,30 @@ pipeline {
                 bat '''
                 curl -o rustup-init.exe https://win.rustup.rs/x86_64
                 rustup-init.exe -y
+                rustup default nightly
                 '''
             }
-        }
+}
 
-        stage('Build') {
-            steps {
-                bat 'cargo build --verbose'
-            }
-        }
-
-        stage('Test & Coverage') {
+        stage('Build & Coverage') {
             steps {
                 bat """
-                    cargo install grcov
-                    set RUSTFLAGS=-Zinstrument-coverage
-                    set LLVM_PROFILE_FILE=coverage-%p-%m.profraw
-                    cargo clean
-                    cargo build
-                    cargo test
-                    grcov . -s . -t cobertura --branch --ignore-not-existing -o coverage
-                    """
+                cargo install grcov
+                rustup default nightly
+                set RUSTFLAGS=-Zinstrument-coverage
+                set LLVM_PROFILE_FILE=coverage-%p-%m.profraw
+                set RUSTC_BOOTSTRAP=1
+                cargo clean
+                cargo build --verbose
+                cargo test --verbose
+                grcov . ^
+                    -s . ^
+                    --binary-path ./target/debug/ ^
+                    -t cobertura ^
+                    --branch ^
+                    --ignore-not-existing ^
+                    -o coverage/coverage.xml
+                """
             }
         }
 
