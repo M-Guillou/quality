@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_OPTS = '-Dmaven.repo.local=.m2/repository'
         SONAR_TOKEN = credentials('sonar-token')
     }
 
@@ -15,27 +14,27 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                sh 'mvn clean verify'
+                bat 'mvn clean verify'
             }
         }
 
         stage('Code Coverage') {
             steps {
-                sh 'mvn jacoco:report'
+                bat 'mvn jacoco:report'
             }
         }
 
         stage('SonarCloud Analysis') {
             steps {
                 withSonarQubeEnv('SonarCloud') {
-                    sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN'
+                    bat "mvn sonar:sonar -Dsonar.login=%SONAR_TOKEN%"
                 }
             }
         }
 
         stage('OWASP Dependency Check') {
             steps {
-                sh 'mvn org.owasp:dependency-check-maven:check'
+                bat 'mvn org.owasp:dependency-check-maven:check'
             }
         }
 
