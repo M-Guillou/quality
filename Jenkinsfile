@@ -30,11 +30,15 @@ pipeline {
 
         stage('Test & Coverage') {
             steps {
-                bat 'cargo install grcov'
-                bat 'set RUSTFLAGS="-Zinstrument-coverage"'
-                bat 'set LLVM_PROFILE_FILE="coverage-%p-%m.profraw"'
-                bat 'cargo test --verbose'
-                bat 'grcov . -s . -t cobertura --branch --ignore-not-existing -o coverage/coverage.xml'
+                bat """
+                    cargo install grcov
+                    set RUSTFLAGS=-Zinstrument-coverage
+                    set LLVM_PROFILE_FILE=coverage-%p-%m.profraw
+                    cargo clean
+                    cargo build
+                    cargo test
+                    grcov . -s . -t cobertura --branch --ignore-not-existing -o coverage
+                    """
             }
         }
 
@@ -48,7 +52,7 @@ pipeline {
 
         stage('OWASP Check') {
             steps {
-                bat './dependency-check/bin/dependency-check.sh --project your-project --scan .'
+                bat 'dependency-check\\bin\\dependency-check.bat --project your-project --scan .'
             }
         }
 
