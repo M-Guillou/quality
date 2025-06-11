@@ -15,35 +15,35 @@ pipeline {
 
         stage('Install Rust') {
             steps {
-                sh 'curl https://sh.rustup.rs -sSf | sh -s -- -y'
-                sh 'source $HOME/.cargo/env'
+                bat 'curl https://sh.rustup.rs -sSf | sh -s -- -y'
+                bat 'source $HOME/.cargo/env'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'cargo build --verbose'
+                bat 'cargo build --verbose'
             }
         }
 
         stage('Test & Coverage') {
             steps {
-                sh 'cargo install cargo-tarpaulin'
-                sh 'cargo tarpaulin --out Lcov --output-dir ./coverage'
+                bat 'cargo install cargo-tarpaulin'
+                bat 'cargo tarpaulin --out Lcov --output-dir ./coverage'
             }
         }
 
         stage('SonarCloud Analysis') {
             steps {
                 withSonarQubeEnv('MySonarQubeServer') {
-                    sh 'sonar-scanner'
+                    bat 'sonar-scanner'
                 }
             }
         }
 
         stage('OWASP Check') {
             steps {
-                sh './dependency-check/bin/dependency-check.sh --project your-project --scan .'
+                bat './dependency-check/bin/dependency-check.sh --project your-project --scan .'
             }
         }
 
