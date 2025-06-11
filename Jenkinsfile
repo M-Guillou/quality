@@ -14,10 +14,10 @@ pipeline {
         }
 
         stage('Install Rust') {
-            steps {
-                bat 'curl https://sh.rustup.rs -sSf | bat -s -- -y'
-                bat 'source $HOME/.cargo/env'
-            }
+            bat '''
+            curl -o rustup-init.exe https://win.rustup.rs/x86_64
+            rustup-init.exe -y
+            '''
         }
 
         stage('Build') {
