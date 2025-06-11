@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="/ajouter" method="post">
+        <input name="nom" placeholder="Nom" required />
+        <input name="prenom" placeholder="Prénom" required />
+        <input name="date_naissance" placeholder="YYYY-MM-DD" required />
+        <input name="adresse" placeholder="Adresse" required />
+        <input name="code_postal" placeholder="Code Postal" required />
+        <input name="ville" placeholder="Ville" required />
+        <button type="submit">Ajouter</button>
+    </form>
+{% endblock %}

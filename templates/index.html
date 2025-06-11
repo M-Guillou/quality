@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <a href="/ajouter">Ajouter un client</a>
+    <ul>
+        {% for client in clients %}
+            <li>{{ client.nom }} {{ client.prenom }} - {{ client.ville }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
