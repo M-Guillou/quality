@@ -37,7 +37,7 @@ pipeline {
 
         stage('SonarCloud Analysis') {
             steps {
-                withSonarQubeEnv('MySonarQubeServer') {
+                withSonarQubeEnv('SonarCloud') {
                     bat 'sonar-scanner'
                 }
             }
