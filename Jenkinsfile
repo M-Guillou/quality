@@ -30,8 +30,11 @@ pipeline {
 
         stage('Test & Coverage') {
             steps {
-                bat 'cargo install cargo-tarpaulin'
-                bat 'cargo tarpaulin --out Xml --output-dir coverage'
+                bat 'cargo install grcov'
+                bat 'set RUSTFLAGS="-Zinstrument-coverage"'
+                bat 'set LLVM_PROFILE_FILE="coverage-%p-%m.profraw"'
+                bat 'cargo test --verbose'
+                bat 'grcov . -s . -t cobertura --branch --ignore-not-existing -o coverage/coverage.xml'
             }
         }
 
