@@ -15,5 +15,4 @@ public class Client {
     private String nom, prenom, adresse, codePostal, ville;
     @Column(name="date_naissance")
     private LocalDate dateNaissance;
-    // getters/setters…
 }
