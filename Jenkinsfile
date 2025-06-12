@@ -18,12 +18,6 @@ pipeline {
             }
         }
 
-        stage('Code Coverage') {
-            steps {
-                bat 'mvn jacoco:report'
-            }
-        }
-
         stage('SonarCloud Analysis') {
             steps {
                 withSonarQubeEnv('SonarCloud') {
