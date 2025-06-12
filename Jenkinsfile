@@ -20,8 +20,10 @@ pipeline {
 
         stage('SonarCloud Analysis') {
             steps {
-                withSonarQubeEnv('SonarCloud') {
-                    bat "mvn sonar:sonar -Dsonar.login=%SONAR_TOKEN%"
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('SonarCloud') {
+                        bat "mvn sonar:sonar -Dsonar.login=${env.SONAR_TOKEN}"
+                    }
                 }
             }
         }
