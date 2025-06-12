@@ -3,7 +3,7 @@ package com.example.quality.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -14,6 +14,6 @@ public class Client {
     private Long id;
     private String nom, prenom, adresse, codePostal, ville;
     @Column(name="date_naissance")
-    private Date dateNaissance;
+    private LocalDate dateNaissance;
     // getters/setters…
 }

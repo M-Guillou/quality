@@ -3,6 +3,7 @@ package com.example.quality;
 import com.example.quality.model.Client;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +18,7 @@ public class ClientTest {
         client.setAdresse("123 rue Exemple");
         client.setCodePostal("75000");
         client.setVille("Paris");
-        Date birthDate = new Date();
+        LocalDate birthDate = LocalDate.of(1990, 1, 1);
         client.setDateNaissance(birthDate);
 
         assertEquals("Doe", client.getNom());
