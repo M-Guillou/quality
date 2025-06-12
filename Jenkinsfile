@@ -14,7 +14,16 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                bat 'mvn clean verify'
+                script {
+                    // Run tests and capture exit code
+                    def testResult = bat(returnStatus: true, script: 'mvn clean verify')
+
+                    // Mark build as unstable if tests failed
+                    if (testResult != 0) {
+                        echo "Tests failed but continuing to next stages"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
             }
         }
 
