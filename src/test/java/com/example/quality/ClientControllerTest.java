@@ -43,7 +43,7 @@ public class ClientControllerTest {
                         .param("prenom", "John")
                         .param("dateNaissance", "1990-01-01")
                         .param("adresse", "123 rue Exemple")
-                        .param("cp", "75000")
+                        .param("codePostal", "75000")
                         .param("ville", "Paris"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
@@ -57,7 +57,7 @@ public class ClientControllerTest {
                         .param("prenom", "John")
                         .param("dateNaissance", "1990-01-01")
                         .param("adresse", "123 rue Exemple")
-                        .param("cp", "75000")
+                        .param("codePostal", "75000")
                         .param("ville", "Paris"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("form"));

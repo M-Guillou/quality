@@ -12,5 +12,4 @@ public class NewClient {
     @NotNull
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private LocalDate dateNaissance;
-    // getters/setters…
 }
