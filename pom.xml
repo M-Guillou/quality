@@ -88,22 +88,19 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
                 <executions>
+                    <!-- Bind Jacoco to the test phase -->
                     <execution>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+                    <!-- Generate the report after tests run -->
                     <execution>
                         <id>report</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
-                        <configuration>
-                            <formats>
-                                <format>xml</format>
-                            </formats>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
